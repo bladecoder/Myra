@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Xml.Serialization;
-using XNAssets.Utility;
 
 #if !XENKO
 using Microsoft.Xna.Framework;
@@ -36,15 +35,15 @@ namespace Myra.MML
 					continue;
 				}
 
-				var attr = property.FindAttribute<XmlIgnoreAttribute>();
-				if (attr != null)
-				{
-					continue;
-				}
+				//var attr = property.FindAttribute<XmlIgnoreAttribute>();
+				//if (attr != null)
+				//{
+				//	continue;
+				//}
 
 				var propertyType = property.PropertyType;
 				if (propertyType.IsPrimitive || 
-					propertyType.IsNullablePrimitive() ||
+					//propertyType.IsNullablePrimitive() ||
 					propertyType.IsEnum || 
 					propertyType == typeof(string) ||
 					propertyType == typeof(Color) ||

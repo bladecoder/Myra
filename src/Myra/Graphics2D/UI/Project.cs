@@ -2,7 +2,6 @@
 using System.Reflection;
 using System.ComponentModel;
 using Myra.Graphics2D.UI.Styles;
-using System.Xml.Linq;
 using System.Xml.Serialization;
 using System;
 using Myra.MML;
@@ -10,9 +9,7 @@ using System.Collections.Generic;
 using Myra.Attributes;
 using System.Linq;
 using Myra.Graphics2D.TextureAtlases;
-using XNAssets.Utility;
 using Myra.Graphics2D.Brushes;
-using XNAssets;
 
 #if !XENKO
 using Microsoft.Xna.Framework.Graphics;
@@ -153,252 +150,252 @@ namespace Myra.Graphics2D.UI
 			return CreateSaveContext(Stylesheet);
 		}
 
-		internal static LoadContext CreateLoadContext(IAssetManager assetManager, Stylesheet stylesheet)
-		{
-			Func<Type, string, object> resourceGetter = (t, name) =>
-			{
-				if (t == typeof(IBrush))
-				{
-					return new SolidBrush(name);
-				}
-				else if (t == typeof(IImage))
-				{
-					return assetManager.Load<TextureRegion>(name);
-				}
-				else if (t == typeof(SpriteFont))
-				{
-					return assetManager.Load<SpriteFont>(name);
-				}
+		//internal static LoadContext CreateLoadContext(IAssetManager assetManager, Stylesheet stylesheet)
+		//{
+		//	Func<Type, string, object> resourceGetter = (t, name) =>
+		//	{
+		//		if (t == typeof(IBrush))
+		//		{
+		//			return new SolidBrush(name);
+		//		}
+		//		else if (t == typeof(IImage))
+		//		{
+		//			return assetManager.Load<TextureRegion>(name);
+		//		}
+		//		else if (t == typeof(SpriteFont))
+		//		{
+		//			return assetManager.Load<SpriteFont>(name);
+		//		}
 
-				throw new Exception(string.Format("Type {0} isn't supported", t.Name));
-			};
+		//		throw new Exception(string.Format("Type {0} isn't supported", t.Name));
+		//	};
 
-			return new LoadContext
-			{
-				LegacyClassNames = LegacyClassNames,
-				ObjectCreator = (t, el) => CreateItem(t, el, stylesheet),
-				Namespace = typeof(Widget).Namespace,
-				ResourceGetter = resourceGetter
-			};
-		}
+		//	return new LoadContext
+		//	{
+		//		LegacyClassNames = LegacyClassNames,
+		//		ObjectCreator = (t, el) => CreateItem(t, el, stylesheet),
+		//		Namespace = typeof(Widget).Namespace,
+		//		ResourceGetter = resourceGetter
+		//	};
+		//}
 
-		internal LoadContext CreateLoadContext(IAssetManager assetManager)
-		{
-			return CreateLoadContext(assetManager, Stylesheet);
-		}
+		//internal LoadContext CreateLoadContext(IAssetManager assetManager)
+		//{
+		//	return CreateLoadContext(assetManager, Stylesheet);
+		//}
 
-		public string Save()
-		{
-			var saveContext = CreateSaveContext();
-			var root = saveContext.Save(this);
+		//public string Save()
+		//{
+		//	var saveContext = CreateSaveContext();
+		//	var root = saveContext.Save(this);
 
-			var xDoc = new XDocument(root);
+		//	var xDoc = new XDocument(root);
 
-			return xDoc.ToString();
-		}
+		//	return xDoc.ToString();
+		//}
 
-		public static Project LoadFromXml(XDocument xDoc, IAssetManager assetManager, Stylesheet stylesheet)
-		{
-			var result = new Project
-			{
-				Stylesheet = stylesheet
-			};
+		//public static Project LoadFromXml(XDocument xDoc, IAssetManager assetManager, Stylesheet stylesheet)
+		//{
+		//	var result = new Project
+		//	{
+		//		Stylesheet = stylesheet
+		//	};
 
-			var loadContext = result.CreateLoadContext(assetManager);
-			loadContext.Load(result, xDoc.Root);
+		//	var loadContext = result.CreateLoadContext(assetManager);
+		//	loadContext.Load(result, xDoc.Root);
 
-			return result;
-		}
+		//	return result;
+		//}
 
-		public static Project LoadFromXml(string data, IAssetManager assetManager, Stylesheet stylesheet)
-		{
-			return LoadFromXml(XDocument.Parse(data), assetManager, stylesheet);
-		}
+		//public static Project LoadFromXml(string data, IAssetManager assetManager, Stylesheet stylesheet)
+		//{
+		//	return LoadFromXml(XDocument.Parse(data), assetManager, stylesheet);
+		//}
 
-		public static Project LoadFromXml(string data)
-		{
-			return LoadFromXml(data, null, Stylesheet.Current);
-		}
+		//public static Project LoadFromXml(string data)
+		//{
+		//	return LoadFromXml(data, null, Stylesheet.Current);
+		//}
 
-		public static object LoadObjectFromXml(string data, IAssetManager assetManager, Stylesheet stylesheet)
-		{
-			XDocument xDoc = XDocument.Parse(data);
+		//public static object LoadObjectFromXml(string data, IAssetManager assetManager, Stylesheet stylesheet)
+		//{
+		//	XDocument xDoc = XDocument.Parse(data);
 
-			Type itemType;
-			if (!IsProportionName(xDoc.Root.Name.ToString()))
-			{
-				var itemNamespace = typeof(Widget).Namespace;
+		//	Type itemType;
+		//	if (!IsProportionName(xDoc.Root.Name.ToString()))
+		//	{
+		//		var itemNamespace = typeof(Widget).Namespace;
 
-				var widgetName = xDoc.Root.Name.ToString();
-				string newName;
-				if (LegacyClassNames.TryGetValue(widgetName, out newName))
-				{
-					widgetName = newName;
-				}
+		//		var widgetName = xDoc.Root.Name.ToString();
+		//		string newName;
+		//		if (LegacyClassNames.TryGetValue(widgetName, out newName))
+		//		{
+		//			widgetName = newName;
+		//		}
 
-				itemType = typeof(Widget).Assembly.GetType(itemNamespace + "." + widgetName);
-			}
-			else
-			{
-				itemType = typeof(Proportion);
-			}
+		//		itemType = typeof(Widget).Assembly.GetType(itemNamespace + "." + widgetName);
+		//	}
+		//	else
+		//	{
+		//		itemType = typeof(Proportion);
+		//	}
 
-			if (itemType == null)
-			{
-				return null;
-			}
+		//	if (itemType == null)
+		//	{
+		//		return null;
+		//	}
 
-			var item = CreateItem(itemType, xDoc.Root, stylesheet);
-			var loadContext = CreateLoadContext(assetManager, stylesheet);
-			loadContext.Load(item, xDoc.Root);
+		//	var item = CreateItem(itemType, xDoc.Root, stylesheet);
+		//	var loadContext = CreateLoadContext(assetManager, stylesheet);
+		//	loadContext.Load(item, xDoc.Root);
 
-			return item;
-		}
+		//	return item;
+		//}
 
-		public object LoadObjectFromXml(string data, IAssetManager assetManager)
-		{
-			return LoadObjectFromXml(data, assetManager, Stylesheet);
-		}
+		//public object LoadObjectFromXml(string data, IAssetManager assetManager)
+		//{
+		//	return LoadObjectFromXml(data, assetManager, Stylesheet);
+		//}
 
-		public string SaveObjectToXml(object obj, string tagName)
-		{
-			var saveContext = CreateSaveContext(Stylesheet);
-			return saveContext.Save(obj, true, tagName).ToString();
-		}
+		//public string SaveObjectToXml(object obj, string tagName)
+		//{
+		//	var saveContext = CreateSaveContext(Stylesheet);
+		//	return saveContext.Save(obj, true, tagName).ToString();
+		//}
 
-		private static object CreateItem(Type type, XElement element, Stylesheet stylesheet)
-		{
-			if (typeof(Widget).IsAssignableFrom(type))
-			{
-				// Check whether it accepts style name parameter
-				var acceptsStyleName = false;
-				foreach (var c in type.GetConstructors())
-				{
-					var p = c.GetParameters();
-					if (p != null && p.Length == 1)
-					{
-						if (p[0].ParameterType == typeof(string))
-						{
-							acceptsStyleName = true;
-							break;
-						}
-					}
-				}
+		//private static object CreateItem(Type type, XElement element, Stylesheet stylesheet)
+		//{
+		//	if (typeof(Widget).IsAssignableFrom(type))
+		//	{
+		//		// Check whether it accepts style name parameter
+		//		var acceptsStyleName = false;
+		//		foreach (var c in type.GetConstructors())
+		//		{
+		//			var p = c.GetParameters();
+		//			if (p != null && p.Length == 1)
+		//			{
+		//				if (p[0].ParameterType == typeof(string))
+		//				{
+		//					acceptsStyleName = true;
+		//					break;
+		//				}
+		//			}
+		//		}
 
-				if (acceptsStyleName)
-				{
-					var result = (Widget)Activator.CreateInstance(type, (string)null);
+		//		if (acceptsStyleName)
+		//		{
+		//			var result = (Widget)Activator.CreateInstance(type, (string)null);
 
-					// Determine style name
-					var styleName = Stylesheet.DefaultStyleName;
-					var styleNameAttr = element.Attribute("StyleName");
-					if (styleNameAttr != null)
-					{
-						var stylesNames = stylesheet.GetStylesByWidgetName(type.Name);
-						if (stylesNames != null && stylesNames.Contains(styleNameAttr.Value))
-						{
-							styleName = styleNameAttr.Value;
-						}
-						else
-						{
-							// Remove property with absent value
-							styleNameAttr.Remove();
-						}
-					}
+		//			// Determine style name
+		//			var styleName = Stylesheet.DefaultStyleName;
+		//			var styleNameAttr = element.Attribute("StyleName");
+		//			if (styleNameAttr != null)
+		//			{
+		//				var stylesNames = stylesheet.GetStylesByWidgetName(type.Name);
+		//				if (stylesNames != null && stylesNames.Contains(styleNameAttr.Value))
+		//				{
+		//					styleName = styleNameAttr.Value;
+		//				}
+		//				else
+		//				{
+		//					// Remove property with absent value
+		//					styleNameAttr.Remove();
+		//				}
+		//			}
 
-					// Set style
-					result.SetStyle(stylesheet, styleName);
+		//			// Set style
+		//			result.SetStyle(stylesheet, styleName);
 
-					return result;
-				}
-			}
+		//			return result;
+		//		}
+		//	}
 
-			return Activator.CreateInstance(type);
-		}
+		//	return Activator.CreateInstance(type);
+		//}
 
 		private static bool HasStylesheetValue(Widget w, PropertyInfo property, Stylesheet stylesheet)
 		{
-			if (stylesheet == null)
-			{
-				return false;
-			}
+			//if (stylesheet == null)
+			//{
+			//	return false;
+			//}
 
-			var styleName = w.StyleName;
-			if (string.IsNullOrEmpty(styleName))
-			{
-				styleName = Stylesheet.DefaultStyleName;
-			}
+			//var styleName = w.StyleName;
+			//if (string.IsNullOrEmpty(styleName))
+			//{
+			//	styleName = Stylesheet.DefaultStyleName;
+			//}
 
-			// Find styles dict of that widget
-			var typeName = w.GetType().Name;
-			var styleTypeNameAttribute = w.GetType().FindAttribute<StyleTypeNameAttribute>();
-			if (styleTypeNameAttribute != null)
-			{
-				typeName = styleTypeNameAttribute.Name;
-			}
+			//// Find styles dict of that widget
+			//var typeName = w.GetType().Name;
+			//var styleTypeNameAttribute = w.GetType().FindAttribute<StyleTypeNameAttribute>();
+			//if (styleTypeNameAttribute != null)
+			//{
+			//	typeName = styleTypeNameAttribute.Name;
+			//}
 
-			var stylesDictPropertyName = typeName + "Styles";
-			var stylesDictProperty = stylesheet.GetType().GetRuntimeProperty(stylesDictPropertyName);
-			if (stylesDictProperty == null)
-			{
-				return false;
-			}
+			//var stylesDictPropertyName = typeName + "Styles";
+			//var stylesDictProperty = stylesheet.GetType().GetRuntimeProperty(stylesDictPropertyName);
+			//if (stylesDictProperty == null)
+			//{
+			//	return false;
+			//}
 
-			var stylesDict = (IDictionary)stylesDictProperty.GetValue(stylesheet);
-			if (stylesDict == null)
-			{
-				return false;
-			}
+			//var stylesDict = (IDictionary)stylesDictProperty.GetValue(stylesheet);
+			//if (stylesDict == null)
+			//{
+			//	return false;
+			//}
 
-			// Fetch style from the dict
-			if (!stylesDict.Contains(styleName))
-			{
-				styleName = Stylesheet.DefaultStyleName;
-			}
+			//// Fetch style from the dict
+			//if (!stylesDict.Contains(styleName))
+			//{
+			//	styleName = Stylesheet.DefaultStyleName;
+			//}
 
-			object obj =  stylesDict[styleName];
+			//object obj =  stylesDict[styleName];
 
-			// Now find corresponding property
-			PropertyInfo styleProperty = null;
+			//// Now find corresponding property
+			//PropertyInfo styleProperty = null;
 
-			var stylePropertyPathAttribute = property.FindAttribute<StylePropertyPathAttribute>();
-			if (stylePropertyPathAttribute != null)
-			{
-				var path = stylePropertyPathAttribute.Name;
-				if (path.StartsWith("/"))
-				{
-					obj = stylesheet;
-					path = path.Substring(1);
-				}
+			//var stylePropertyPathAttribute = property.FindAttribute<StylePropertyPathAttribute>();
+			//if (stylePropertyPathAttribute != null)
+			//{
+			//	var path = stylePropertyPathAttribute.Name;
+			//	if (path.StartsWith("/"))
+			//	{
+			//		obj = stylesheet;
+			//		path = path.Substring(1);
+			//	}
 
-				var parts = path.Split('/');
-				for (var i = 0; i < parts.Length; ++i)
-				{
-					styleProperty = obj.GetType().GetRuntimeProperty(parts[i]);
+			//	var parts = path.Split('/');
+			//	for (var i = 0; i < parts.Length; ++i)
+			//	{
+			//		styleProperty = obj.GetType().GetRuntimeProperty(parts[i]);
 
-					if (i < parts.Length - 1)
-					{
-						obj = styleProperty.GetValue(obj);
-					}
-				}
-			}
-			else
-			{
-				styleProperty = obj.GetType().GetRuntimeProperty(property.Name);
-			}
+			//		if (i < parts.Length - 1)
+			//		{
+			//			obj = styleProperty.GetValue(obj);
+			//		}
+			//	}
+			//}
+			//else
+			//{
+			//	styleProperty = obj.GetType().GetRuntimeProperty(property.Name);
+			//}
 
-			if (styleProperty == null)
-			{
-				return false;
-			}
+			//if (styleProperty == null)
+			//{
+			//	return false;
+			//}
 
-			// Compare values
-			var styleValue = styleProperty.GetValue(obj);
-			var value = property.GetValue(w);
-			if (!Equals(styleValue, value))
-			{
-				return false;
-			}
+			//// Compare values
+			//var styleValue = styleProperty.GetValue(obj);
+			//var value = property.GetValue(w);
+			//if (!Equals(styleValue, value))
+			//{
+			//	return false;
+			//}
 
 			return true;
 		}

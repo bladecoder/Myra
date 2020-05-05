@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using XNAssets;
-using Myra.Assets;
-using XNAssets.Utility;
 
 #if !XENKO
 using Microsoft.Xna.Framework;
@@ -16,7 +13,7 @@ namespace Myra
 {
 	public static class MyraEnvironment
 	{
-		private static AssetManager _defaultAssetManager;
+		//private static AssetManager _defaultAssetManager;
 
 		private static bool _assetsLoadersUpdated = false;
 		private static Game _game;
@@ -66,28 +63,28 @@ namespace Myra
 				if (!_assetsLoadersUpdated)
 				{
 					// Use our own SpriteFontLoader that can use TextureRegion as backing image
-					AssetManager.SetAssetLoader(new SpriteFontLoader());
+					//AssetManager.SetAssetLoader(new SpriteFontLoader());
 
 					_assetsLoadersUpdated = true;
 				}
 			}
 		}
 
-		/// <summary>
-		/// Default Assets Manager
-		/// </summary>
-		public static AssetManager DefaultAssetManager
-		{
-			get
-			{
-				if (_defaultAssetManager == null)
-				{
-					_defaultAssetManager = new AssetManager(GraphicsDevice, new FileAssetResolver(PathUtils.ExecutingAssemblyDirectory));
-				}
+		///// <summary>
+		///// Default Assets Manager
+		///// </summary>
+		//public static AssetManager DefaultAssetManager
+		//{
+		//	get
+		//	{
+		//		if (_defaultAssetManager == null)
+		//		{
+		//			_defaultAssetManager = new AssetManager(GraphicsDevice, new FileAssetResolver(PathUtils.ExecutingAssemblyDirectory));
+		//		}
 
-				return _defaultAssetManager;
-			}
-		}
+		//		return _defaultAssetManager;
+		//	}
+		//}
 
 		public static bool DrawWidgetsFrames { get; set; }
 		public static bool DrawKeyboardFocusedWidgetFrame { get; set; }

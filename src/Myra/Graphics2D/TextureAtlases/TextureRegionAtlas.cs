@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using Myra.MML;
-using XNAssets;
 
 #if !XENKO
 using Microsoft.Xna.Framework;
@@ -14,7 +12,6 @@ using Texture2D = Xenko.Graphics.Texture;
 
 namespace Myra.Graphics2D.TextureAtlases
 {
-	[AssetLoader(typeof(TextureRegionAtlasLoader))]
 	public partial class TextureRegionAtlas
 	{
 		private const string TextureAtlasName = "TextureAtlas";
@@ -59,87 +56,91 @@ namespace Myra.Graphics2D.TextureAtlases
 
 		public string ToXml()
 		{
-			var doc = new XDocument();
-			var root = new XElement(TextureAtlasName);
-			root.SetAttributeValue(ImageName, Image);
-			doc.Add(root);
+            //var doc = new XDocument();
+            //var root = new XElement(TextureAtlasName);
+            //root.SetAttributeValue(ImageName, Image);
+            //doc.Add(root);
 
-			foreach(var pair in Regions)
-			{
-				var region = pair.Value;
-				var asNinePatch = region as NinePatchRegion;
+            //foreach(var pair in Regions)
+            //{
+            //	var region = pair.Value;
+            //	var asNinePatch = region as NinePatchRegion;
 
-				var entry = new XElement(asNinePatch != null ? NinePatchRegionName : TextureRegionName);
+            //	var entry = new XElement(asNinePatch != null ? NinePatchRegionName : TextureRegionName);
 
-				entry.SetAttributeValue(BaseContext.IdName, pair.Key);
-				entry.SetAttributeValue(LeftName, region.Bounds.Left);
-				entry.SetAttributeValue(TopName, region.Bounds.Top);
-				entry.SetAttributeValue(WidthName, region.Bounds.Width);
-				entry.SetAttributeValue(HeightName, region.Bounds.Height);
+            //	entry.SetAttributeValue(BaseContext.IdName, pair.Key);
+            //	entry.SetAttributeValue(LeftName, region.Bounds.Left);
+            //	entry.SetAttributeValue(TopName, region.Bounds.Top);
+            //	entry.SetAttributeValue(WidthName, region.Bounds.Width);
+            //	entry.SetAttributeValue(HeightName, region.Bounds.Height);
 
-				if (asNinePatch != null)
-				{
-					entry.SetAttributeValue(NinePatchLeftName, asNinePatch.Info.Left);
-					entry.SetAttributeValue(NinePatchTopName, asNinePatch.Info.Top);
-					entry.SetAttributeValue(NinePatchRightName, asNinePatch.Info.Right);
-					entry.SetAttributeValue(NinePatchBottomName, asNinePatch.Info.Bottom);
-				}
+            //	if (asNinePatch != null)
+            //	{
+            //		entry.SetAttributeValue(NinePatchLeftName, asNinePatch.Info.Left);
+            //		entry.SetAttributeValue(NinePatchTopName, asNinePatch.Info.Top);
+            //		entry.SetAttributeValue(NinePatchRightName, asNinePatch.Info.Right);
+            //		entry.SetAttributeValue(NinePatchBottomName, asNinePatch.Info.Bottom);
+            //	}
 
-				root.Add(entry);
-			}
+            //	root.Add(entry);
+            //}
 
-			return doc.ToString();
+            //return doc.ToString();
+
+            return null;
 		}
 
 		public static TextureRegionAtlas FromXml(string xml, Func<string, Texture2D> textureGetter)
 		{
-			var doc = XDocument.Parse(xml);
-			var root = doc.Root;
+			//var doc = XDocument.Parse(xml);
+			//var root = doc.Root;
 
-			var result = new TextureRegionAtlas();
-			var imageFileAttr = root.Attribute(ImageName);
-			if (imageFileAttr == null)
-			{
-				throw new Exception("Mandatory attribute 'ImageFile' doesnt exist");
-			}
+			//var result = new TextureRegionAtlas();
+			//var imageFileAttr = root.Attribute(ImageName);
+			//if (imageFileAttr == null)
+			//{
+			//	throw new Exception("Mandatory attribute 'ImageFile' doesnt exist");
+			//}
 
-			result.Image = imageFileAttr.Value;
+			//result.Image = imageFileAttr.Value;
 
-			var texture = textureGetter(result.Image);
-			foreach(XElement entry in root.Elements())
-			{
-				var id = entry.Attribute(BaseContext.IdName).Value;
+			//var texture = textureGetter(result.Image);
+			//foreach(XElement entry in root.Elements())
+			//{
+			//	var id = entry.Attribute(BaseContext.IdName).Value;
 
-				var bounds = new Rectangle(
-					int.Parse(entry.Attribute(LeftName).Value),
-					int.Parse(entry.Attribute(TopName).Value),
-					int.Parse(entry.Attribute(WidthName).Value),
-					int.Parse(entry.Attribute(HeightName).Value)
-				);
+			//	var bounds = new Rectangle(
+			//		int.Parse(entry.Attribute(LeftName).Value),
+			//		int.Parse(entry.Attribute(TopName).Value),
+			//		int.Parse(entry.Attribute(WidthName).Value),
+			//		int.Parse(entry.Attribute(HeightName).Value)
+			//	);
 
-				var isNinePatch = entry.Name == NinePatchRegionName;
+			//	var isNinePatch = entry.Name == NinePatchRegionName;
 
-				TextureRegion region;
-				if (!isNinePatch)
-				{
-					region = new TextureRegion(texture, bounds);
-				} else
-				{
-					var padding = new Thickness
-					{
-						Left = int.Parse(entry.Attribute(NinePatchLeftName).Value),
-						Top = int.Parse(entry.Attribute(NinePatchTopName).Value),
-						Right = int.Parse(entry.Attribute(NinePatchRightName).Value),
-						Bottom = int.Parse(entry.Attribute(NinePatchBottomName).Value)
-					};
+			//	TextureRegion region;
+			//	if (!isNinePatch)
+			//	{
+			//		region = new TextureRegion(texture, bounds);
+			//	} else
+			//	{
+			//		var padding = new Thickness
+			//		{
+			//			Left = int.Parse(entry.Attribute(NinePatchLeftName).Value),
+			//			Top = int.Parse(entry.Attribute(NinePatchTopName).Value),
+			//			Right = int.Parse(entry.Attribute(NinePatchRightName).Value),
+			//			Bottom = int.Parse(entry.Attribute(NinePatchBottomName).Value)
+			//		};
 
-					region = new NinePatchRegion(texture, bounds, padding);
-				}
+			//		region = new NinePatchRegion(texture, bounds, padding);
+			//	}
 
-				result[id] = region;
-			}
+			//	result[id] = region;
+			//}
 
-			return result;
+			//return result;
+
+            return null;
 		}
 	}
 }

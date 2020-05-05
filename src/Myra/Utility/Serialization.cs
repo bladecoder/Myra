@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
-using XNAssets.Utility;
 using Myra.Graphics2D;
 
 #if !XENKO
@@ -53,32 +52,32 @@ namespace Myra.Utility
 				return true;
 			}
 
-			var defaultAttribute = property.FindAttribute<DefaultValueAttribute>();
+			//var defaultAttribute = property.FindAttribute<DefaultValueAttribute>();
 
-			object defaultAttributeValue = null;
-			if (defaultAttribute != null)
-			{
-				defaultAttributeValue = defaultAttribute.Value;
-				// If property is of Color type, than DefaultValueAttribute should contain its name or hex
-				if (property.PropertyType == typeof(Color))
-				{
-					defaultAttributeValue = ColorStorage.FromName(defaultAttributeValue.ToString()).Value;
-				}
+			//object defaultAttributeValue = null;
+			//if (defaultAttribute != null)
+			//{
+			//	defaultAttributeValue = defaultAttribute.Value;
+			//	// If property is of Color type, than DefaultValueAttribute should contain its name or hex
+			//	if (property.PropertyType == typeof(Color))
+			//	{
+			//		defaultAttributeValue = ColorStorage.FromName(defaultAttributeValue.ToString()).Value;
+			//	}
 
-				if (property.PropertyType == typeof(string) && 
-					string.IsNullOrEmpty((string)defaultAttributeValue) && 
-					string.IsNullOrEmpty((string)value))
-				{
-					// Skip empty/null string
-					return true;
-				}
+			//	if (property.PropertyType == typeof(string) && 
+			//		string.IsNullOrEmpty((string)defaultAttributeValue) && 
+			//		string.IsNullOrEmpty((string)value))
+			//	{
+			//		// Skip empty/null string
+			//		return true;
+			//	}
 
-				if (Equals(value, defaultAttributeValue))
-				{
-					// Skip default
-					return true;
-				}
-			}
+			//	if (Equals(value, defaultAttributeValue))
+			//	{
+			//		// Skip default
+			//		return true;
+			//	}
+			//}
 
 			return false;
 		}

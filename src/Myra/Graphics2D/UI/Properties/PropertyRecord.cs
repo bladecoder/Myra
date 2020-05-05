@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using XNAssets.Utility;
 
 namespace Myra.Graphics2D.UI.Properties
 {
@@ -35,7 +34,8 @@ namespace Myra.Graphics2D.UI.Properties
 
 		public override T FindAttribute<T>()
 		{
-			return _propertyInfo.FindAttribute<T>();
+            //return _propertyInfo.FindAttribute<T>();
+            return null;
 		}
 	}
 }

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using System.Xml.Linq;
 using Myra.MML;
 using System.Collections;
-using XNAssets;
 
 #if !XENKO
 using Microsoft.Xna.Framework;
@@ -16,7 +14,6 @@ using Xenko.Graphics;
 
 namespace Myra.Graphics2D.UI.Styles
 {
-	[AssetLoader(typeof(StylesheetLoader))]
 	public class Stylesheet
 	{
 		private static readonly Dictionary<string, string> LegacyClassNames = new Dictionary<string, string>();
@@ -570,50 +567,52 @@ namespace Myra.Graphics2D.UI.Styles
 			Func<string, IBrush> textureGetter,
 			Func<string, SpriteFont> fontGetter)
 		{
-			var xDoc = XDocument.Parse(stylesheetXml);
+            //var xDoc = XDocument.Parse(stylesheetXml);
 
-			var colors = new Dictionary<string, Color>();
-			var colorsNode = xDoc.Root.Element("Colors");
-			if (colorsNode != null)
-			{
-				foreach(var el in colorsNode.Elements())
-				{
-					var color = ColorStorage.FromName(el.Attribute("Value").Value);
-					if (color != null)
-					{
-						colors[el.Attribute(BaseContext.IdName).Value] = color.Value;
-					}
-				}
-			}
+            //var colors = new Dictionary<string, Color>();
+            //var colorsNode = xDoc.Root.Element("Colors");
+            //if (colorsNode != null)
+            //{
+            //	foreach(var el in colorsNode.Elements())
+            //	{
+            //		var color = ColorStorage.FromName(el.Attribute("Value").Value);
+            //		if (color != null)
+            //		{
+            //			colors[el.Attribute(BaseContext.IdName).Value] = color.Value;
+            //		}
+            //	}
+            //}
 
-			Func<Type, string, object> resourceGetter = (t, s) =>
-			{
-				if (typeof(IBrush).IsAssignableFrom(t))
-				{
-					return textureGetter(s);
-				} else if (t == typeof(SpriteFont))
-				{
-					return fontGetter(s);
-				}
+            //Func<Type, string, object> resourceGetter = (t, s) =>
+            //{
+            //	if (typeof(IBrush).IsAssignableFrom(t))
+            //	{
+            //		return textureGetter(s);
+            //	} else if (t == typeof(SpriteFont))
+            //	{
+            //		return fontGetter(s);
+            //	}
 
-				throw new Exception(string.Format("Type {0} isn't supported", t.Name));
-			};
+            //	throw new Exception(string.Format("Type {0} isn't supported", t.Name));
+            //};
 
-			var result = new Stylesheet();
+            //var result = new Stylesheet();
 
-			var loadContext = new LoadContext
-			{
-				Namespace = typeof(WidgetStyle).Namespace,
-				ResourceGetter = resourceGetter,
-				NodesToIgnore = new HashSet<string>(new[] { "Designer", "Colors", "Fonts" }),
-				LegacyClassNames = LegacyClassNames,
-				LegacyPropertyNames = LegacyPropertyNames,
-				Colors = colors
-			};
+            //var loadContext = new LoadContext
+            //{
+            //	Namespace = typeof(WidgetStyle).Namespace,
+            //	ResourceGetter = resourceGetter,
+            //	NodesToIgnore = new HashSet<string>(new[] { "Designer", "Colors", "Fonts" }),
+            //	LegacyClassNames = LegacyClassNames,
+            //	LegacyPropertyNames = LegacyPropertyNames,
+            //	Colors = colors
+            //};
 
-			loadContext.Load(result, xDoc.Root);
+            //loadContext.Load(result, xDoc.Root);
 
-			return result;
+            //return result;
+
+            return null;
 		}
 
 		public string[] GetStylesByWidgetName(string name)

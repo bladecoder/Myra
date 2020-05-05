@@ -1,5 +1,4 @@
 ﻿using System;
-using XNAssets;
 
 #if !XENKO
 using Microsoft.Xna.Framework;
@@ -12,7 +11,6 @@ using Texture2D = Xenko.Graphics.Texture;
 
 namespace Myra.Graphics2D.TextureAtlases
 {
-	[AssetLoader(typeof(TextureRegionLoader))]
 	public class TextureRegion: IImage
 	{
 		private readonly Texture2D _texture;

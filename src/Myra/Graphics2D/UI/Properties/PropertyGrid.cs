@@ -12,7 +12,6 @@ using Myra.Graphics2D.UI.File;
 using Myra.Graphics2D.TextureAtlases;
 using System.IO;
 using Myra.Graphics2D.Brushes;
-using XNAssets.Utility;
 using Myra.Attributes;
 
 #if !XENKO
@@ -575,150 +574,154 @@ namespace Myra.Graphics2D.UI.Properties
 
 		private SpinButton CreateNumericEditor(Record record, bool hasSetter)
 		{
-			var propertyType = record.Type;
-			var value = record.GetValue(_object);
+            //var propertyType = record.Type;
+            //var value = record.GetValue(_object);
 
-			var numericType = propertyType;
-			if (propertyType.IsNullablePrimitive())
-			{
-				numericType = propertyType.GetNullableType();
-			}
+            //var numericType = propertyType;
+            //if (propertyType.IsNullablePrimitive())
+            //{
+            //	numericType = propertyType.GetNullableType();
+            //}
 
-			var spinButton = new SpinButton
-			{
-				Integer = numericType.IsNumericInteger(),
-				Nullable = propertyType.IsNullablePrimitive(),
-				Value = value != null ? (float)Convert.ChangeType(value, typeof(float)) : default(float?)
-			};
+            //var spinButton = new SpinButton
+            //{
+            //	Integer = numericType.IsNumericInteger(),
+            //	Nullable = propertyType.IsNullablePrimitive(),
+            //	Value = value != null ? (float)Convert.ChangeType(value, typeof(float)) : default(float?)
+            //};
 
-			if (hasSetter)
-			{
-				spinButton.ValueChanged += (sender, args) =>
-				{
-					try
-					{
-						object result;
+            //if (hasSetter)
+            //{
+            //	spinButton.ValueChanged += (sender, args) =>
+            //	{
+            //		try
+            //		{
+            //			object result;
 
-						if (spinButton.Value != null)
-						{
-							result = Convert.ChangeType(spinButton.Value.Value, numericType);
-						}
-						else
-						{
-							result = null;
-						}
+            //			if (spinButton.Value != null)
+            //			{
+            //				result = Convert.ChangeType(spinButton.Value.Value, numericType);
+            //			}
+            //			else
+            //			{
+            //				result = null;
+            //			}
 
-						SetValue(record, _object, result);
+            //			SetValue(record, _object, result);
 
-						if (record.Type.IsValueType)
-						{
-							// Handle structs
-							var tg = this;
-							var pg = tg._parentGrid;
-							while (pg != null && tg._parentProperty != null && tg._parentProperty.Type.IsValueType)
-							{
-								tg._parentProperty.SetValue(pg._object, tg._object);
+            //			if (record.Type.IsValueType)
+            //			{
+            //				// Handle structs
+            //				var tg = this;
+            //				var pg = tg._parentGrid;
+            //				while (pg != null && tg._parentProperty != null && tg._parentProperty.Type.IsValueType)
+            //				{
+            //					tg._parentProperty.SetValue(pg._object, tg._object);
 
-								if (!tg._parentProperty.Type.IsValueType)
-								{
-									break;
-								}
+            //					if (!tg._parentProperty.Type.IsValueType)
+            //					{
+            //						break;
+            //					}
 
-								tg = pg;
-								pg = tg._parentGrid;
-							}
-						}
+            //					tg = pg;
+            //					pg = tg._parentGrid;
+            //				}
+            //			}
 
-						FireChanged(record.Name);
-					}
-					catch (InvalidCastException)
-					{
-						// TODO: Rework this ugly type conversion solution
-					}
-					catch (Exception ex)
-					{
-						spinButton.Value = args.OldValue;
-						var dialog = Dialog.CreateMessageBox("Error", ex.ToString());
-						dialog.ShowModal();
-					}
-				};
-			}
-			else
-			{
-				spinButton.Enabled = false;
-			}
+            //			FireChanged(record.Name);
+            //		}
+            //		catch (InvalidCastException)
+            //		{
+            //			// TODO: Rework this ugly type conversion solution
+            //		}
+            //		catch (Exception ex)
+            //		{
+            //			spinButton.Value = args.OldValue;
+            //			var dialog = Dialog.CreateMessageBox("Error", ex.ToString());
+            //			dialog.ShowModal();
+            //		}
+            //	};
+            //}
+            //else
+            //{
+            //	spinButton.Enabled = false;
+            //}
 
-			return spinButton;
+            //return spinButton;
+
+            return null;
 		}
 
 		private TextBox CreateStringEditor(Record record, bool hasSetter)
 		{
-			var propertyType = record.Type;
-			var value = record.GetValue(_object);
+            //var propertyType = record.Type;
+            //var value = record.GetValue(_object);
 
-			var tf = new TextBox
-			{
-				Text = value != null ? value.ToString() : string.Empty
-			};
+            //var tf = new TextBox
+            //{
+            //	Text = value != null ? value.ToString() : string.Empty
+            //};
 
-			if (hasSetter)
-			{
-				tf.TextChanged += (sender, args) =>
-				{
-					try
-					{
-						object result;
+            //if (hasSetter)
+            //{
+            //	tf.TextChanged += (sender, args) =>
+            //	{
+            //		try
+            //		{
+            //			object result;
 
-						if (propertyType.IsNullablePrimitive())
-						{
-							if (string.IsNullOrEmpty(tf.Text))
-							{
-								result = null;
-							}
-							else
-							{
-								result = Convert.ChangeType(tf.Text, record.Type.GetNullableType());
-							}
-						}
-						else
-						{
-							result = Convert.ChangeType(tf.Text, record.Type);
-						}
+            //			if (propertyType.IsNullablePrimitive())
+            //			{
+            //				if (string.IsNullOrEmpty(tf.Text))
+            //				{
+            //					result = null;
+            //				}
+            //				else
+            //				{
+            //					result = Convert.ChangeType(tf.Text, record.Type.GetNullableType());
+            //				}
+            //			}
+            //			else
+            //			{
+            //				result = Convert.ChangeType(tf.Text, record.Type);
+            //			}
 
-						SetValue(record, _object, result);
+            //			SetValue(record, _object, result);
 
-						if (record.Type.IsValueType)
-						{
-							var tg = this;
-							var pg = tg._parentGrid;
-							while (pg != null && tg._parentProperty != null)
-							{
-								tg._parentProperty.SetValue(pg._object, tg._object);
+            //			if (record.Type.IsValueType)
+            //			{
+            //				var tg = this;
+            //				var pg = tg._parentGrid;
+            //				while (pg != null && tg._parentProperty != null)
+            //				{
+            //					tg._parentProperty.SetValue(pg._object, tg._object);
 
-								if (!tg._parentProperty.Type.IsValueType)
-								{
-									break;
-								}
+            //					if (!tg._parentProperty.Type.IsValueType)
+            //					{
+            //						break;
+            //					}
 
-								tg = pg;
-								pg = tg._parentGrid;
-							}
-						}
+            //					tg = pg;
+            //					pg = tg._parentGrid;
+            //				}
+            //			}
 
-						FireChanged(record.Name);
-					}
-					catch (Exception)
-					{
-						// TODO: Rework this ugly type conversion solution
-					}
-				};
-			}
-			else
-			{
-				tf.Enabled = false;
-			}
+            //			FireChanged(record.Name);
+            //		}
+            //		catch (Exception)
+            //		{
+            //			// TODO: Rework this ugly type conversion solution
+            //		}
+            //	};
+            //}
+            //else
+            //{
+            //	tf.Enabled = false;
+            //}
 
-			return tf;
+            //return tf;
+
+            return null;
 		}
 
 		private Grid CreateCollectionEditor(Record record, Type itemType)
@@ -775,10 +778,10 @@ namespace Myra.Graphics2D.UI.Properties
 
 		private Grid CreateFileEditor<T>(Record record, bool hasSetter, string filter)
 		{
-			if (Settings.AssetManager == null)
-			{
-				return null;
-			}
+			//if (Settings.AssetManager == null)
+			//{
+			//	return null;
+			//}
 
 			var propertyType = record.Type;
 			var value = record.GetValue(_object);
@@ -846,29 +849,29 @@ namespace Myra.Graphics2D.UI.Properties
 							return;
 						}
 
-						try
-						{
-							var newValue = Settings.AssetManager.Load<T>(dlg.FilePath);
+						//try
+						//{
+						//	var newValue = Settings.AssetManager.Load<T>(dlg.FilePath);
 
-							var filePath = dlg.FilePath;
-							if (!string.IsNullOrEmpty(Settings.BasePath))
-							{
-								filePath = PathUtils.TryToMakePathRelativeTo(filePath, Settings.BasePath);
-							}
+						//	var filePath = dlg.FilePath;
+						//	if (!string.IsNullOrEmpty(Settings.BasePath))
+						//	{
+						//		filePath = PathUtils.TryToMakePathRelativeTo(filePath, Settings.BasePath);
+						//	}
 
-							textBox.Text = filePath;
-							SetValue(record, _object, newValue);
-							if (baseObject != null)
-							{
-								baseObject.Resources[record.Name] = filePath;
-							}
+						//	textBox.Text = filePath;
+						//	SetValue(record, _object, newValue);
+						//	if (baseObject != null)
+						//	{
+						//		baseObject.Resources[record.Name] = filePath;
+						//	}
 
-							FireChanged(propertyType.Name);
-						}
-						catch(Exception)
-						{
+						//	FireChanged(propertyType.Name);
+						//}
+						//catch(Exception)
+						//{
 
-						}
+						//}
 					};
 
 					dlg.ShowModal();
@@ -925,31 +928,31 @@ namespace Myra.Graphics2D.UI.Properties
 
 					valueWidget = CreateEnumEditor(record, hasSetter);
 				}
-				else if (propertyType.IsNumericType() ||
-						 (propertyType.IsNullablePrimitive() && propertyType.GetNullableType().IsNumericType()))
-				{
+				//else if (propertyType.IsNumericType() ||
+				//		 (propertyType.IsNullablePrimitive() && propertyType.GetNullableType().IsNumericType()))
+				//{
 
-					valueWidget = CreateNumericEditor(record, hasSetter);
-				}
-				else if (propertyType == typeof(string) || propertyType.IsPrimitive || propertyType.IsNullablePrimitive())
-				{
-					valueWidget = CreateStringEditor(record, hasSetter);
-				}
-				else if (typeof(IList).IsAssignableFrom(propertyType))
-				{
-					if (!IgnoreCollections)
-					{
-						var it = propertyType.FindGenericType(typeof(ICollection<>));
-						if (it != null)
-						{
-							var itemType = it.GenericTypeArguments[0];
-							if (value != null)
-							{
-								valueWidget = CreateCollectionEditor(record, itemType);
-							}
-						}
-					}
-				}
+				//	valueWidget = CreateNumericEditor(record, hasSetter);
+				//}
+				//else if (propertyType == typeof(string) || propertyType.IsPrimitive || propertyType.IsNullablePrimitive())
+				//{
+				//	valueWidget = CreateStringEditor(record, hasSetter);
+				//}
+				//else if (typeof(IList).IsAssignableFrom(propertyType))
+				//{
+				//	if (!IgnoreCollections)
+				//	{
+				//		var it = propertyType.FindGenericType(typeof(ICollection<>));
+				//		if (it != null)
+				//		{
+				//			var itemType = it.GenericTypeArguments[0];
+				//			if (value != null)
+				//			{
+				//				valueWidget = CreateCollectionEditor(record, itemType);
+				//			}
+				//		}
+				//	}
+				//}
 				else if (propertyType == typeof(SpriteFont))
 				{
 					valueWidget = CreateFileEditor<SpriteFont>(record, hasSetter, "*.fnt");
@@ -1051,25 +1054,25 @@ namespace Myra.Graphics2D.UI.Properties
 				var hasSetter = property.GetSetMethod() != null &&
 								property.GetSetMethod().IsPublic;
 
-				var browsableAttr = property.FindAttribute<BrowsableAttribute>();
-				if (browsableAttr != null && !browsableAttr.Browsable)
-				{
-					continue;
-				}
+				//var browsableAttr = property.FindAttribute<BrowsableAttribute>();
+				//if (browsableAttr != null && !browsableAttr.Browsable)
+				//{
+				//	continue;
+				//}
 
-				var readOnlyAttr = property.FindAttribute<ReadOnlyAttribute>();
-				if (readOnlyAttr != null && readOnlyAttr.IsReadOnly)
-				{
-					hasSetter = false;
-				}
+				//var readOnlyAttr = property.FindAttribute<ReadOnlyAttribute>();
+				//if (readOnlyAttr != null && readOnlyAttr.IsReadOnly)
+				//{
+				//	hasSetter = false;
+				//}
 
 				var record = new PropertyRecord(property)
 				{
 					HasSetter = hasSetter
 				};
 
-				var categoryAttr = property.FindAttribute<CategoryAttribute>();
-				record.Category = categoryAttr != null ? categoryAttr.Category : DefaultCategoryName;
+				//var categoryAttr = property.FindAttribute<CategoryAttribute>();
+				//record.Category = categoryAttr != null ? categoryAttr.Category : DefaultCategoryName;
 
 				records.Add(record);
 			}
@@ -1082,29 +1085,29 @@ namespace Myra.Graphics2D.UI.Properties
 					continue;
 				}
 
-				var browsableAttr = field.FindAttribute<BrowsableAttribute>();
-				if (browsableAttr != null && !browsableAttr.Browsable)
-				{
-					continue;
-				}
+				//var browsableAttr = field.FindAttribute<BrowsableAttribute>();
+				//if (browsableAttr != null && !browsableAttr.Browsable)
+				//{
+				//	continue;
+				//}
 
-				var categoryAttr = field.FindAttribute<CategoryAttribute>();
+				//var categoryAttr = field.FindAttribute<CategoryAttribute>();
 
-				var hasSetter = true;
-				var readOnlyAttr = field.FindAttribute<ReadOnlyAttribute>();
-				if (readOnlyAttr != null && readOnlyAttr.IsReadOnly)
-				{
-					hasSetter = false;
-				}
+				//var hasSetter = true;
+				//var readOnlyAttr = field.FindAttribute<ReadOnlyAttribute>();
+				//if (readOnlyAttr != null && readOnlyAttr.IsReadOnly)
+				//{
+				//	hasSetter = false;
+				//}
 
 
-				var record = new FieldRecord(field)
-				{
-					HasSetter = hasSetter,
-					Category = categoryAttr != null ? categoryAttr.Category : DefaultCategoryName
-				};
+				//var record = new FieldRecord(field)
+				//{
+				//	HasSetter = hasSetter,
+				//	Category = categoryAttr != null ? categoryAttr.Category : DefaultCategoryName
+				//};
 
-				records.Add(record);
+				//records.Add(record);
 			}
 
 			// Sort by categories
