@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Myra.Utility;
+using Myra.Graphics2D.UI;
 
 #if !XENKO
 using Microsoft.Xna.Framework;
@@ -27,6 +28,8 @@ namespace Myra.Graphics2D.Text
 		private bool _dirty = true;
 		private StringBuilder _stringBuilder = new StringBuilder();
 		private readonly Dictionary<int, Point> _measures = new Dictionary<int, Point>();
+
+        public HorizontalAlignment Alignment { get; set; } = HorizontalAlignment.Left;
 
 		public SpriteFont Font
 		{
@@ -494,11 +497,22 @@ namespace Myra.Graphics2D.Text
 		public void Draw(SpriteBatch batch, Point position, Rectangle clip, Color textColor, bool useChunkColor, float opacity = 1.0f)
 		{
 			var y = position.Y;
+
 			foreach (var line in Lines)
 			{
 				if (y + line.Size.Y >= clip.Top && y <= clip.Bottom)
 				{
-					textColor = line.Draw(batch, new Point(position.X, y), textColor, useChunkColor, opacity);
+                    int x = position.X;
+
+                    if(Alignment == HorizontalAlignment.Center)
+                    {
+                        x += (Size.X - line.Size.X) / 2; 
+                    } else if(Alignment == HorizontalAlignment.Left)
+                    {
+                        x += (Size.X - line.Size.X);
+                    }
+
+					textColor = line.Draw(batch, new Point(x, y), textColor, useChunkColor, opacity);
 				} else
 				{
 					foreach (var chunk in line.Chunks)
