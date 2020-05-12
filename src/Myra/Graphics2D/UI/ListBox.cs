@@ -17,8 +17,9 @@ namespace Myra.Graphics2D.UI
 	{
 		private readonly VerticalStackPanel _box;
 		internal ComboBox _parentComboBox;
+        public event EventHandler ActionEvent;
 
-		[Browsable(false)]
+        [Browsable(false)]
 		[XmlIgnore]
 		public ListBoxStyle ListBoxStyle
 		{
@@ -137,6 +138,9 @@ namespace Myra.Graphics2D.UI
 
 		private void ComboHideDropdown()
 		{
+            if(ActionEvent != null)
+                ActionEvent.Invoke(this, null);
+
 			if (_parentComboBox == null)
 			{
 				return;
@@ -168,6 +172,12 @@ namespace Myra.Graphics2D.UI
 						SelectedIndex = SelectedIndex.Value - 1;
 						UpdateScrolling();
 					}
+                    else if(SelectedIndex == null)
+                    {
+                        SelectedIndex = 0;
+                        UpdateScrolling();
+                    }
+
 					break;
 				case Keys.Down:
 					if (SelectedIndex != null && SelectedIndex.Value < Items.Count - 1)
@@ -175,7 +185,12 @@ namespace Myra.Graphics2D.UI
 						SelectedIndex = SelectedIndex.Value + 1;
 						UpdateScrolling();
 					}
-					break;
+                    else if (SelectedIndex == null)
+                    {
+                        SelectedIndex = 0;
+                        UpdateScrolling();
+                    }
+                    break;
 				case Keys.Enter:
 					ComboHideDropdown();
 					break;
