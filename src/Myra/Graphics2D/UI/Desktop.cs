@@ -376,7 +376,7 @@ namespace Myra.Graphics2D.UI
 			}
 		}
 
-		public static Action<Keys> KeyDownHandler;
+        public static Action<Keys> KeyDownHandler;
 
 		public static event EventHandler MouseMoved;
 
@@ -983,6 +983,14 @@ namespace Myra.Graphics2D.UI
 
 			_lastDownKeys = _downKeys.ToArray();
 		}
+
+        public static void ResetInputState()
+        {
+            if(TouchPanel.GetCapabilities().IsConnected)
+                _oldTouchState = TouchPanel.GetState();
+            _lastDownKeys = DownKeysGetter();
+            _lastMouseInfo = MouseInfoGetter();
+        }
 
 		public static void UpdateInput()
 		{
