@@ -15,98 +15,98 @@ using Clr = Xenko.Core.Mathematics.Color;
 
 namespace Myra.Graphics2D.Text
 {
-	public class TextChunk
-	{
-		protected string _text;
-		protected readonly SpriteFont _font;
-		protected Point _size;
+    public class TextChunk
+    {
+        protected string _text;
+        protected readonly SpriteFont _font;
+        protected Point _size;
 
-		public List<GlyphInfo> Glyphs { get; private set; }
+        public List<GlyphInfo> Glyphs { get; private set; }
 
-		public int Count { get { return _text.Length(); } }
-		public string Text { get { return _text; } }
-		public Point Size { get { return _size; } }
+        public int Count { get { return _text.Length(); } }
+        public string Text { get { return _text; } }
+        public Point Size { get { return _size; } }
 
-		public int LineIndex { get; internal set; }
-		public int ChunkIndex { get; internal set; }
-		public int Top { get; internal set; }
-		public int TextStartIndex { get; internal set; }
-		public Color? Color;
+        public int LineIndex { get; internal set; }
+        public int ChunkIndex { get; internal set; }
+        public int Top { get; internal set; }
+        public int TextStartIndex { get; internal set; }
+        public Color? Color;
 
-		public TextChunk(SpriteFont font, string text, Point size, bool calculateGlyps)
-		{
-			if (font == null)
-			{
-				throw new ArgumentNullException("font");
-			}
+        public TextChunk(SpriteFont font, string text, Point size, bool calculateGlyps)
+        {
+            if (font == null)
+            {
+                throw new ArgumentNullException("font");
+            }
 
-			_font = font;
-			_text = text;
-			_size = size;
+            _font = font;
+            _text = text;
+            _size = size;
 
-			if (calculateGlyps)
-			{
-				CalculateGlyphs();
-			}
-		}
+            if (calculateGlyps)
+            {
+                CalculateGlyphs();
+            }
+        }
 
-		private void CalculateGlyphs()
-		{
-			if (string.IsNullOrEmpty(_text))
-			{
-				return;
-			}
+        private void CalculateGlyphs()
+        {
+            if (string.IsNullOrEmpty(_text))
+            {
+                return;
+            }
 
-			Glyphs = new List<GlyphInfo>();
+            Glyphs = new List<GlyphInfo>();
 
-			for (var i = 0; i < _text.Length; ++i)
-			{
-				Glyphs.Add(new GlyphInfo
-				{
-					TextChunk = this,
-					Character = _text[i],
-					Index = i
-				});
-			}
+            for (var i = 0; i < _text.Length; ++i)
+            {
+                Glyphs.Add(new GlyphInfo
+                {
+                    TextChunk = this,
+                    Character = _text[i],
+                    Index = i
+                });
+            }
 #if MONOGAME
-			var fontGlyphs = _font.GetGlyphs();
+            var fontGlyphs = _font.GetGlyphs();
 
-			var offset = Vector2.Zero;
-			var firstGlyphOfLine = true;
+            var offset = Vector2.Zero;
+            var firstGlyphOfLine = true;
 
-			for (var i = 0; i < _text.Length; ++i)
-			{
-				var c = _text[i];
+            for (var i = 0; i < _text.Length; ++i)
+            {
+                var c = _text[i];
 
-				SpriteFont.Glyph g;
-				if (!fontGlyphs.TryGetValue(c, out g) && _font.DefaultCharacter != null && c != '\n' && c != '\r')
-				{
-					fontGlyphs.TryGetValue(_font.DefaultCharacter.Value, out g);
-				}
+                SpriteFont.Glyph g;
+                if (!fontGlyphs.TryGetValue(c, out g) && _font.DefaultCharacter != null && c != '\n' && c != '\r')
+                {
+                    fontGlyphs.TryGetValue(_font.DefaultCharacter.Value, out g);
+                }
 
-				// The first character on a line might have a negative left side bearing.
-				// In this scenario, SpriteBatch/SpriteFont normally offset the text to the right,
-				//  so that text does not hang off the left side of its rectangle.
-				if (firstGlyphOfLine)
-				{
-					offset.X = Math.Max(g.LeftSideBearing, 0);
-					firstGlyphOfLine = false;
-				}
-				else
-				{
-					offset.X += _font.Spacing + g.LeftSideBearing;
-				}
+                // The first character on a line might have a negative left side bearing.
+                // In this scenario, SpriteBatch/SpriteFont normally offset the text to the right,
+                //  so that text does not hang off the left side of its rectangle.
+                if (firstGlyphOfLine)
+                {
+                    offset.X = Math.Max(g.LeftSideBearing, 0);
+                    firstGlyphOfLine = false;
+                }
+                else
+                {
+                    offset.X += _font.Spacing + g.LeftSideBearing;
+                }
 
-				var p = offset;
+                var p = offset;
 
-				p += g.Cropping.Location.ToVector2();
+                p += g.Cropping.Location.ToVector2();
 
-				var result = new Rectangle((int)p.X, (int)p.Y, (int)(g.Width + g.RightSideBearing), g.BoundsInTexture.Height);
+                var result = new Rectangle((int)p.X, (int)p.Y, (int)(g.Width + g.RightSideBearing), g.BoundsInTexture.Height);
 
-				Glyphs[i].Bounds = result;
+                Glyphs[i].Bounds = result;
 
-				offset.X += g.Width + g.RightSideBearing;
-			}
+                offset.X += g.Width + g.RightSideBearing;
+            }
 #else
 				var offset = Vector2.Zero;
 				for (var i = 0; i < _text.Length; ++i)
@@ -119,71 +119,74 @@ namespace Myra.Graphics2D.Text
 					offset.X += v.X;
 				}
 #endif
-		}
+        }
 
-		public GlyphInfo GetGlyphInfoByIndex(int index)
-		{
-			if (string.IsNullOrEmpty(_text) || index < 0 || index >= _text.Length)
-			{
-				return null;
-			}
+        public GlyphInfo GetGlyphInfoByIndex(int index)
+        {
+            if (string.IsNullOrEmpty(_text) || index < 0 || index >= _text.Length)
+            {
+                return null;
+            }
 
-			return Glyphs[index];
-		}
+            return Glyphs[index];
+        }
 
-		public int? GetGlyphIndexByX(int x)
-		{
-			if (Glyphs.Count == 0 || x < 0)
-			{
-				return null;
-			}
+        public int? GetGlyphIndexByX(int x)
+        {
+            if (Glyphs.Count == 0 || x < 0)
+            {
+                return null;
+            }
 
-			var i = 0;
-			for (; i < Glyphs.Count; ++i)
-			{
-				var glyph = Glyphs[i];
-				var right = glyph.Bounds.Right;
-				if (i < Glyphs.Count - 1)
-				{
-					right = Glyphs[i + 1].Bounds.X;
-				}
+            var i = 0;
+            for (; i < Glyphs.Count; ++i)
+            {
+                var glyph = Glyphs[i];
+                var right = glyph.Bounds.Right;
+                if (i < Glyphs.Count - 1)
+                {
+                    right = Glyphs[i + 1].Bounds.X;
+                }
 
-				if (glyph.Bounds.X <= x && x <= right)
-				{
-					if (x - glyph.Bounds.X >= glyph.Bounds.Width / 2)
-					{
-						++i;
-					}
+                if (glyph.Bounds.X <= x && x <= right)
+                {
+                    if (x - glyph.Bounds.X >= glyph.Bounds.Width / 2)
+                    {
+                        ++i;
+                    }
 
-					break;
-				}
-			}
+                    break;
+                }
+            }
 
-			if (i - 1 >= 0 && i - 1 < Glyphs.Count && Glyphs[i - 1].Character == '\n')
-			{
-				--i;
-			}
+            if (i - 1 >= 0 && i - 1 < Glyphs.Count && Glyphs[i - 1].Character == '\n')
+            {
+                --i;
+            }
 
-			return i;
-		}
+            return i;
+        }
 
-		public void Draw(SpriteBatch batch, Point pos, Color color, float opacity = 1.0f)
-		{
-			batch.DrawString(_font, _text, new Vector2(pos.X, pos.Y), color * opacity);
+        public void Draw(SpriteBatch batch, Point pos, Color color, float rotation, Vector2 origin, Vector2 scale, float opacity = 1.0f)
+        {
+            //batch.DrawString(_font, _text, new Vector2(pos.X, pos.Y), color * opacity);
 
-			if (MyraEnvironment.DrawTextGlyphsFrames && !string.IsNullOrEmpty(_text) && Glyphs != null)
-			{
-				for (var i = 0; i < Glyphs.Count; ++i)
-				{
-					var g = Glyphs[i];
+            batch.DrawString(_font, _text, new Vector2(pos.X, pos.Y), color * opacity, rotation, origin, scale, SpriteEffects.None, 0);
 
-					var r = new Rectangle(pos.X + g.Bounds.X,
-						pos.Y + g.Bounds.Y,
-						g.Bounds.Width, g.Bounds.Height);
 
-					batch.DrawRectangle(r, Clr.White);
-				}
-			}
-		}
-	}
+            if (MyraEnvironment.DrawTextGlyphsFrames && !string.IsNullOrEmpty(_text) && Glyphs != null)
+            {
+                for (var i = 0; i < Glyphs.Count; ++i)
+                {
+                    var g = Glyphs[i];
+
+                    var r = new Rectangle(pos.X + g.Bounds.X,
+                        pos.Y + g.Bounds.Y,
+                        g.Bounds.Width, g.Bounds.Height);
+
+                    batch.DrawRectangle(r, Clr.White);
+                }
+            }
+        }
+    }
 }

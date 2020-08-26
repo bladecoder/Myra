@@ -507,7 +507,7 @@ namespace Myra.Graphics2D.Text
                     if(Alignment == HorizontalAlignment.Center)
                     {
                         x += (Size.X - line.Size.X) / 2; 
-                    } else if(Alignment == HorizontalAlignment.Left)
+                    } else if(Alignment == HorizontalAlignment.Right)
                     {
                         x += (Size.X - line.Size.X);
                     }
@@ -529,7 +529,45 @@ namespace Myra.Graphics2D.Text
 			}
 		}
 
-		private void InvalidateLayout()
+        public void DrawYUp(SpriteBatch batch, Point position, Rectangle clip, Color textColor, bool useChunkColor, float rotation, Vector2 origin, Vector2 scale, float opacity = 1.0f)
+        {
+            var y = position.Y;
+
+            for (int i = Lines.Count - 1; i >= 0; i--)
+            {
+                var line = Lines[i];
+                if (y + line.Size.Y >= clip.Top && y <= clip.Bottom)
+                {
+                    int x = position.X;
+
+                    if (Alignment == HorizontalAlignment.Center)
+                    {
+                        x += (int) ((Size.X - line.Size.X) * scale.X / 2) ;
+                    }
+                    else if (Alignment == HorizontalAlignment.Right)
+                    {
+                        x += (int)((Size.X - line.Size.X) * scale.X);
+                    }
+
+                    textColor = line.Draw(batch, new Point(x, y), textColor, useChunkColor, rotation, origin, scale, opacity);
+                }
+                else
+                {
+                    foreach (var chunk in line.Chunks)
+                    {
+                        if (useChunkColor && chunk.Color != null)
+                        {
+                            textColor = chunk.Color.Value;
+                        }
+                    }
+                }
+
+                y += (int)(line.Size.Y * scale.Y);
+                y += (int)(_verticalSpacing * scale.Y);
+            }
+        }
+
+        private void InvalidateLayout()
 		{
 			_dirty = true;
 		}

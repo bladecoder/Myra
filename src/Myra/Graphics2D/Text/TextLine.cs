@@ -85,7 +85,12 @@ namespace Myra.Graphics2D.Text
 			return Chunks[Chunks.Count - 1].GetGlyphIndexByX(startX);
 		}
 
-		public Color Draw(SpriteBatch batch, Point pos, Color color, bool useChunkColor, float opacity = 1.0f)
+        public Color Draw(SpriteBatch batch, Point pos, Color color, bool useChunkColor, float opacity = 1.0f)
+        {
+            return Draw(batch, pos, color, useChunkColor, 0f, new Vector2(0f, 0f), new Vector2(1f, 1f), opacity);
+        }
+
+        public Color Draw(SpriteBatch batch, Point pos, Color color, bool useChunkColor, float rotation, Vector2 origin, Vector2 scale, float opacity = 1.0f)
 		{
 			foreach (var chunk in Chunks)
 			{
@@ -94,7 +99,7 @@ namespace Myra.Graphics2D.Text
 					color = chunk.Color.Value;
 				}
 
-				chunk.Draw(batch, pos, color, opacity);
+				chunk.Draw(batch, pos, color, rotation, origin, scale, opacity);
 				pos.X += chunk.Size.X;
 			}
 
