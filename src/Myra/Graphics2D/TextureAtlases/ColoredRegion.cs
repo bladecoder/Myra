@@ -53,7 +53,8 @@ namespace Myra.Graphics2D.TextureAtlases
 			if (color == Color.White)
 			{
 				TextureRegion.Draw(batch, dest, Color);
-			} else
+			}
+            else
 			{
 				var c = new Color((int)(Color.R * color.R / 255.0f),
 					(int)(Color.G * color.G / 255.0f),
@@ -63,5 +64,5 @@ namespace Myra.Graphics2D.TextureAtlases
 				TextureRegion.Draw(batch, dest, c);
 			}
 		}
-	}
+    }
 }

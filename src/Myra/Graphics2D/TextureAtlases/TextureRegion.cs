@@ -15,8 +15,10 @@ namespace Myra.Graphics2D.TextureAtlases
 	{
 		private readonly Texture2D _texture;
 		private readonly Rectangle _bounds;
+        private readonly Point _offset;
+        private readonly Point _size;
 
-		public Texture2D Texture
+        public Texture2D Texture
 		{
 			get { return _texture; }
 		}
@@ -26,12 +28,14 @@ namespace Myra.Graphics2D.TextureAtlases
 			get { return _bounds; }
 		}
 
-		public Point Size
+        public Point Offset
+        {
+            get { return _offset; }
+        }
+
+        public Point Size
 		{
-			get
-			{
-				return new Point(Bounds.Width, Bounds.Height);
-			}
+			get { return _size; }
 		}
 
 		/// <summary>
@@ -51,9 +55,22 @@ namespace Myra.Graphics2D.TextureAtlases
 
 			_texture = texture;
 			_bounds = bounds;
+            _size = new Point(bounds.Width, bounds.Height);
+            _offset = Point.Zero;
 		}
 
-		public TextureRegion(TextureRegion region, Rectangle bounds)
+        public TextureRegion(Texture2D texture, Rectangle bounds, Point offset, Point size)
+        {
+            _texture = texture ?? throw new ArgumentNullException("texture");
+            _bounds = bounds;
+            _size = size;
+            _offset = offset;
+
+            // correct for Y axis up
+            //_offset.Y = size.Y - offset.Y - bounds.Height;
+        }
+
+        public TextureRegion(TextureRegion region, Rectangle bounds)
 		{
 			if (region == null)
 			{
@@ -63,23 +80,16 @@ namespace Myra.Graphics2D.TextureAtlases
 			_texture = region.Texture;
 			bounds.Offset(region.Bounds.Location);
 			_bounds = bounds;
-		}
+            _size = new Point(bounds.Width, bounds.Height);
+            _offset = Point.Zero;
+        }
 
 		public virtual void Draw(SpriteBatch batch, Rectangle dest, Color color)
 		{
-#if !XENKO
-			batch.Draw(Texture,
-				dest,
-				Bounds,
-				color);
-#else
-			batch.Draw(Texture,
-				new RectangleF(dest.X, dest.Y, dest.Width, dest.Height),
-				new RectangleF(Bounds.X, Bounds.Y, Bounds.Width, Bounds.Height),
-				color,
-				0.0f,
-				Vector2.Zero);
-#endif
+            float scaleX = dest.Width / (float)Size.X;
+            float scaleY = dest.Height / (float)Size.Y;
+            var dest2 = new Rectangle((int)(dest.X + Offset.X * scaleX), (int)(dest.Y + Offset.Y * scaleY), (int)(Bounds.Width * scaleX), (int)(Bounds.Height * scaleY)); 
+			batch.Draw(Texture,	dest2, Bounds, color);
 		}
 	}
 }

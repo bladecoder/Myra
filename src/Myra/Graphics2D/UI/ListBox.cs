@@ -17,7 +17,6 @@ namespace Myra.Graphics2D.UI
     {
         private readonly VerticalStackPanel _box;
         internal ComboBox _parentComboBox;
-        public event EventHandler ActionEvent;
 
         [Browsable(false)]
         [XmlIgnore]
@@ -138,8 +137,6 @@ namespace Myra.Graphics2D.UI
 
         private void ComboHideDropdown()
         {
-            ActionEvent?.Invoke(this, null);
-
             if (_parentComboBox == null)
             {
                 return;
@@ -199,7 +196,7 @@ namespace Myra.Graphics2D.UI
 
         public override void OnTouchUp()
         {
-            base.OnTouchDown();
+            base.OnTouchUp();
 
             if (!InternalChild._verticalScrollingOn || !InternalChild._verticalScrollbarFrame.Contains(Desktop.TouchPosition))
             {
@@ -276,6 +273,17 @@ namespace Myra.Graphics2D.UI
         protected override void InternalSetStyle(Stylesheet stylesheet, string name)
         {
             ApplyListBoxStyle(stylesheet.ListBoxStyles[name]);
+        }
+
+        public int GetHoverIndex()
+        {
+            for(int i=0; i < Items.Count; i++)
+            {
+                if (Items[i].Widget.IsMouseInside && Items[i].Widget.Active)
+                    return i;
+            }
+
+            return -1;
         }
     }
 }
