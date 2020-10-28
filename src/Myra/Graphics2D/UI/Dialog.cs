@@ -26,8 +26,8 @@ namespace Myra.Graphics2D.UI
 		{
 			var buttonsGrid = new HorizontalStackPanel()
 			{
-				Spacing = 8,
-				HorizontalAlignment = HorizontalAlignment.Right
+				Spacing = 18,
+				HorizontalAlignment = HorizontalAlignment.Center
 			};
 
 			ButtonOk = new ImageTextButton
@@ -74,7 +74,8 @@ namespace Myra.Graphics2D.UI
 				case Keys.Enter:
 					if (ButtonOk.Visible)
 					{
-						ButtonOk.DoClick();
+                        if(!ButtonOk.IsMouseInside && !ButtonCancel.IsMouseInside)
+                            ButtonOk.DoClick();
 					}
 					break;
 			}

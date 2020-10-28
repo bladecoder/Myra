@@ -220,7 +220,7 @@ namespace Myra.Graphics2D.UI
 			else if (Font != null)
 			{
 				result = _formattedText.Measure(_wrap ? width : default(int?));
-			}
+            }
 
 			if (result.Y < CrossEngineStuff.LineSpacing(Font))
 			{
@@ -320,7 +320,7 @@ namespace Myra.Graphics2D.UI
 		{
 			base.Arrange();
 
-			_formattedText.Width = _wrap ? Bounds.Width : default(int?);
+			_formattedText.Width = _wrap ? Bounds.Width - Margin.Width : default(int?);
 		}
 
 		public void ApplyLabelStyle(LabelStyle style)

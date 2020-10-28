@@ -74,6 +74,7 @@ namespace Myra.Utility
 				if (w.IsTouchInside)
 				{
 					w.OnTouchUp();
+                    break;
 				}
 			}
 		}

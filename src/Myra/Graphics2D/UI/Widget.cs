@@ -681,7 +681,7 @@ namespace Myra.Graphics2D.UI
 		{
 			get
 			{
-				return _bounds - _margin;
+                return _bounds - _margin;
 			}
 		}
 
